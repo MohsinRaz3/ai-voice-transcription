@@ -32,30 +32,16 @@ function SetupStream(stream){
         chunks.push(e.data);
     }
     recorder.onstop= async e=> {
-        const blob = new Blob(chunks, { type : "audio/ogg; codecs=opus"});
+        const blob = new Blob(chunks, { type:'audio/wav'});
         console.log("audio dataa",blob);
         chunks = [];
         const audioURL = window.URL.createObjectURL(blob);
         playback.src = audioURL;
-          // Convert the blob to mp3
-          const mp3Blob = await convertToMp3(blob);
-          console.log("converted to mp333",mp3Blob);
-        // uploadAudio(mp3Blob)
+    
     }
     can_record = true;
 }
-async function convertToMp3(blob) {
-    const { createFFmpeg, fetchFile } = ffmpeg;
-    const ffmpeg = createFFmpeg({ log: true });
 
-    await ffmpeg.load();
-    ffmpeg.FS('writeFile', 'input.ogg', await fetchFile(blob));
-    await ffmpeg.run('-i', 'input.ogg', 'output.mp3');
-
-    const data = ffmpeg.FS('readFile', 'output.mp3');
-    const mp3Blob = new Blob([data.buffer], { type: 'audio/mp3' });
-    return mp3Blob;
-}
 function ToggleMic(){
     console.log("is_recording",is_recording)
     console.log("can_record",can_record)
