@@ -62,16 +62,15 @@ async function submitAudioFiles(blob) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `audio_${timestamp}.wav`;
     const audioFile = new File([blob], filename, { type: 'audio/wav' });
-    const formData = new FormData();
-    formData.append('file',audioFile, filename)
+    // const formData = new FormData();
+    // formData.append('file',audioFile, filename)
 
 
-    const url = `http://localhost:8000/transcribe`;
-    console.log("this is encoeed url",formData);
+    const url = `http://localhost:8000/transcribe?blob=${audioFile}`;
+    console.log("this is encoeed url",url);
     try {
         const response = await fetch(url, {
-            method: 'POST',
-            body: formData,
+            method: 'GET',
             headers: {
                 'Access-Control-Allow-Origin': '*'
             }
