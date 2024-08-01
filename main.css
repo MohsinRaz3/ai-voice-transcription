@@ -2,114 +2,77 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: sans-serif;   
-}
-
-button{
+    font-family: sans-serif;
+  }
+  
+  button {
     appearance: none;
     border: none;
     outline: none;
     background: none;
     cursor: pointer;
-}
-
-body{
+  }
+  
+  body {
     background-color: #eee;
-}
-
-main{
+  }
+  
+  main {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 4rem 2rem;
-}
-
-.mic-toggle{
+  }
+  
+  .mic-toggle {
     position: relative;
     display: block;
     width: 8rem;
     height: 8rem;
     border-radius: 50%;
-    background-color: crimson;
+    background-color: rgb(84, 163, 209);
     margin-bottom: 4rem;
-}
-
-.mic-toggle:after,
-.mic-toggle:before {
-    --pad: 0rem;
-    content: '';
-    display: block;
+    transition: background-color 0.3s ease;
+  }
+  
+  .mic-toggle:after {
+    content: "";
     position: absolute;
-    z-index: 0;
-    background-color: rgba(200, 20, 60, 0.2);
-    top: var(--pad);
-    left: var(--pad);
-    right: var(--pad);
-    bottom: var(--pad);
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-}
-
-.mic-toggle:after{
-    transition: 0.4s;
-}
-
-.mic-toggle:before{
-    transition: 0.2s;
-}
-
-.mic-toggle:hover:before{
-    --padd: -1rem;
-}
-
-.mic-toggle:hover:after{
-    --padd: -2rem;
-}
-
-.mic-toggle.is-recording:after{
-    animation: smoothPadAfter 0.6s ease-in alternate-reverse forwards infinite;    
-}
-
-.mic-toggle.is-recording:before{
-    animation: smoothPadAfter 0.6s ease-in alternate-reverse forwards infinite;    
-}
-
-@keyframes smoothPadAfter {
+    background-color: rgba(28, 210, 255, 0.3);
+    transform: translate(-50%, -50%);
+  }
+  
+  .mic-toggle.is-recording {
+    background-color: rgb(84, 163, 209);
+  }
+  
+  .mic-toggle.is-recording:after {
+    background-color: rgba(28, 210, 255, 0.3);
+    animation: pulse 1s infinite;
+  }
+  
+  @keyframes pulse {
     0% {
-        top: -2rem;
-        left: -2rem;
-        right: -2rem;
-        bottom: -2rem;
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
     }
     100% {
-        top: -1rem;
-        left: -1rem;
-        right: -1rem;
-        bottom: -1rem;
+      transform: translate(-50%, -50%) scale(1.5);
+      opacity: 0;
     }
-}
-
-@keyframes smoothPadBefore{
-    0% {
-        top: -1rem;
-        left: -1rem;
-        right: -1rem;
-        bottom: -1rem;
-    }
-    100% {
-        top: -0.5rem;
-        left: -0.5rem;
-        right: -0.5rem;
-        bottom: -0.5rem;
-    }
-}
-
-.playback {
+  }
+  
+  .playback {
     margin-bottom: 1rem;
     box-shadow: 0px 0px 1rem rgba(0, 0, 0, 0.2);
     border-radius: 999px;
-}
-
-.is-hidden {
+  }
+  
+  .is-hidden {
     display: none;
-}
-
+  }
