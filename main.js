@@ -61,19 +61,36 @@ function ToggleMic() {
 async function submitAudioFiles(blob) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `audio_${timestamp}.wav`;
-    const audioFile = new File([blob], filename, { type: 'audio/wav' });
-    // const formData = new FormData();
-    // formData.append('file',audioFile, filename)
+    // const audioFile = new File([blob], filename, { type: 'audio/wav' });
+    const formData = new FormData();
+    formData.append('file',blob, `${filename}`)
+console.log("formadata ",FormData)
 
-
-    const url = `http://localhost:8000/transcribe?blob=${audioFile}`;
+    const url = `http://localhost:8000/transcribe`;
     console.log("this is encoeed url",url);
+
+    // for (const [key, value] of formData.entries()) {
+    //     console.log(`Key: ${key}`, `Value:`, value);    }
+    // // Extract the Blob from FormData
+    // const extractedBlob = formData.get('file');
+
+    // // Verify the Blob was extracted correctly
+    // console.log("extractedBlob",extractedBlob);
+
+    // // Create an Object URL from the Blob and play it
+    // const audioUrl = URL.createObjectURL(extractedBlob);
+    // const audioElement = new Audio(audioUrl);
+
+    // // Play the audio
+    // audioElement.play();
+
     try {
         const response = await fetch(url, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Access-Control-Allow-Origin': '*'
-            }
+            },
+            body:formData
         }).then(response => {
             console.log('File uploaded successfully', response);
         }).catch(error => {
