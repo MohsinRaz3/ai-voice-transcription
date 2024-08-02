@@ -32,7 +32,7 @@ async function SetupStream(stream) {
         chunks.push(e.data);
     };
     recorder.onstop = async e => {
-        const blob = new Blob(chunks, { type: 'audio/wav' });
+        const blob = new Blob(chunks, { type: 'audio/mp3' });
         await submitAudioFiles(blob);
         chunks = [];
         const audioURL = window.URL.createObjectURL(blob);
@@ -42,6 +42,8 @@ async function SetupStream(stream) {
 }
 
 function ToggleMic() {
+    console.log("is_recording",is_recording)
+    console.log("can_record",can_record)
     if (!can_record) return;
 
     is_recording = !is_recording;
@@ -60,7 +62,7 @@ function ToggleMic() {
 
 async function submitAudioFiles(blob) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `audio_${timestamp}.wav`;
+    const filename = `audio_${timestamp}.mp3`;
     // const audioFile = new File([blob], filename, { type: 'audio/wav' });
     const formData = new FormData();
     formData.append('file',blob, `${filename}`)
