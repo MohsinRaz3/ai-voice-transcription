@@ -32,7 +32,7 @@ async function SetupStream(stream) {
         chunks.push(e.data);
     };
     recorder.onstop = async e => {
-        const blob = new Blob(chunks, { type: 'audio/mp3' });
+        const blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
         await submitAudioFiles(blob);
         chunks = [];
         const audioURL = window.URL.createObjectURL(blob);
@@ -62,14 +62,14 @@ function ToggleMic() {
 
 async function submitAudioFiles(blob) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `audio_${timestamp}.mp3`;
+    const filename = `audio_${timestamp}.wav`;
     // const audioFile = new File([blob], filename, { type: 'audio/wav' });
     const formData = new FormData();
     formData.append('file',blob, `${filename}`)
-console.log("formadata ",FormData)
+    console.log("formadata22 ",formData)
 
     const url = `http://localhost:8000/transcribe`;
-    console.log("this is encoeed url",url);
+   // console.log("this is encoeed url",url);
 
     // for (const [key, value] of formData.entries()) {
     //     console.log(`Key: ${key}`, `Value:`, value);    }
