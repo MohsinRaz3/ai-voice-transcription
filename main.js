@@ -1,6 +1,8 @@
 const mic_btn = document.querySelector('#mic');
 const mic_Icon = document.querySelector('#mIcon');
 const playback = document.querySelector('.playback');
+const recordingStatus = document.querySelector('#recording-status');
+
 mic_Icon.innerHTML = "mic";
 
 mic_btn.addEventListener('click', ToggleMic);
@@ -20,71 +22,74 @@ function SetupAudio() {
             })
             .then(SetupStream)
             .catch(err => {
-                console.log(err);
+                console.error('Error accessing media devices:', err);
             });
-}
+    } else {
+        console.error('Media devices not supported in this browser.');
+    }
 }
 SetupAudio();
 
 async function SetupStream(stream) {
-    recorder = new MediaRecorder(stream);
-    recorder.ondataavailable = e => {
-        chunks.push(e.data);
-    };
-    recorder.onstop = async e => {
-        const blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
-        await submitAudioFiles(blob);
-        chunks = [];
-        const audioURL = window.URL.createObjectURL(blob);
-        playback.src = audioURL;
-    };
-    can_record = true;
-}
-
-function ToggleMic() {
-    console.log("is_recording",is_recording)
-    console.log("can_record",can_record)
-    if (!can_record) return;
-
-    is_recording = !is_recording;
-
-    if (is_recording) {
-        recorder.start();
-        mic_btn.classList.add("is-recording");
-        mic_Icon.innerHTML = "pause";
-    } else {
-        recorder.stop();
-        mic_btn.classList.remove("is-recording");
-        mic_Icon.innerHTML = "mic";
+    try {
+        recorder = new MediaRecorder(stream);
+        recorder.ondataavailable = e => {
+            chunks.push(e.data);
+        };
+        recorder.onstop = async e => {
+            try {
+                const blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
+                await submitAudioFiles(blob);
+                chunks = [];
+                const audioURL = window.URL.createObjectURL(blob);
+                playback.src = audioURL;
+            } catch (err) {
+                console.error('Error during onstop event:', err);
+            }
+            // Clear the recording status when recording stops
+            recordingStatus.innerHTML = "";
+        };
+        can_record = true;
+    } catch (err) {
+        console.error('Error setting up the stream:', err);
     }
 }
 
+function ToggleMic() {
+    console.log("is_recording", is_recording);
+    console.log("can_record", can_record);
+    if (!can_record) {
+        console.error('Cannot record: recorder is not ready.');
+        return;
+    }
+
+    is_recording = !is_recording;
+
+    try {
+        if (is_recording) {
+            recorder.start();
+            mic_btn.classList.add("is-recording");
+            mic_Icon.innerHTML = "pause";
+            recordingStatus.innerHTML = "Recording...";
+        } else {
+            recorder.stop();
+            mic_btn.classList.remove("is-recording");
+            mic_Icon.innerHTML = "mic";
+            recordingStatus.innerHTML = ""; // Clear the status when paused
+        }
+    } catch (err) {
+        console.error('Error toggling microphone:', err);
+    }
+}
 
 async function submitAudioFiles(blob) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `audio_${timestamp}.wav`;
-    // const audioFile = new File([blob], filename, { type: 'audio/wav' });
     const formData = new FormData();
-    formData.append('file',blob, `${filename}`)
-    console.log("formadata22 ",formData)
+    formData.append('file', blob, filename);
+    console.log("formdata", formData);
 
     const url = `http://localhost:8000/transcribe`;
-   // console.log("this is encoeed url",url);
-
-    // for (const [key, value] of formData.entries()) {
-    //     console.log(`Key: ${key}`, `Value:`, value);    }
-    // // Extract the Blob from FormData
-    // const extractedBlob = formData.get('file');
-
-    // // Verify the Blob was extracted correctly
-    // console.log("extractedBlob",extractedBlob);
-
-    // // Create an Object URL from the Blob and play it
-    // const audioUrl = URL.createObjectURL(extractedBlob);
-    // const audioElement = new Audio(audioUrl);
-
-    // // Play the audio
-    // audioElement.play();
 
     try {
         const response = await fetch(url, {
@@ -92,18 +97,18 @@ async function submitAudioFiles(blob) {
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
-            body:formData
-        })
+            body: formData
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const responseData = await response.json();
-        console.log("final response ", responseData);
-        return  await responseData;
+        console.log("final response", responseData);
+        return responseData;
 
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error submitting audio files:', error);
     }
 }
