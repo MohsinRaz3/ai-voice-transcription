@@ -89,7 +89,7 @@ async function submitAudioFiles(blob) {
     formData.append('file', blob, filename);
     console.log("formdata", formData);
 
-    const url = `http://localhost:8000/transcribe`;
+    const url = `https://salad-api.vercel.app/transcribe`;
 
     try {
         const response = await fetch(url, {
