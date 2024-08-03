@@ -93,11 +93,7 @@ async function submitAudioFiles(blob) {
                 'Access-Control-Allow-Origin': '*'
             },
             body:formData
-        }).then(response => {
-            console.log('File uploaded successfully', response);
-        }).catch(error => {
-            console.error('Error uploading file:', error);
-        });
+        })
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -105,7 +101,7 @@ async function submitAudioFiles(blob) {
 
         const responseData = await response.json();
         console.log("final response ", responseData);
-        return responseData;
+        return  await responseData;
 
     } catch (error) {
         console.error('Error:', error);
