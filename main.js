@@ -89,7 +89,7 @@ async function submitAudioFiles(blob) {
     formData.append('file', blob, filename);
     console.log("formdata", formData);
 
-    const url = "https://salad-api-v2.onrender.com/transcribe";
+    const url = "https://salad-api-v2-zrui.onrender.com/transcribe";
 
     try {
         const response = await fetch(url, {
